@@ -39,11 +39,16 @@ x_census = scaler_census.fit_transform(x_census)
 x_census_training, x_census_test, y_census_training, y_census_test = train_test_split(x_census, y_census, test_size=0.15, random_state=0)
 
 results = []
-for number_of_trees in range(int(input('Number of trees: '))):
+for number_of_trees in range(int(input('Number max of trees: '))):
     random_forest_census = RandomForestClassifier(n_estimators=number_of_trees+1, criterion="entropy", random_state=0)
     random_forest_census.fit(x_census_training, y_census_training)
     predictions = random_forest_census.predict(x_census_test)
     results.append(accuracy_score(y_census_test, predictions)*100)
+
+with open('results.csv', 'w') as file:
+    file.writelines('number_of_trees, accuracy_score\n')
+    for result in results:
+        file.writelines(str((results.index(result)+1)) + ', ' + str(result) + '\n')
 
 plt.plot(list(range(1, len(results)+1, 1)), results)
 plt.xticks(range(1, len(results)+1))
