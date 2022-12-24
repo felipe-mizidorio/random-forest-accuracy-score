@@ -4,6 +4,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
 
 with open('data/census.csv', 'rb') as file:
     data_base = pd.read_csv(file)
@@ -37,8 +38,16 @@ x_census = scaler_census.fit_transform(x_census)
 
 x_census_training, x_census_test, y_census_training, y_census_test = train_test_split(x_census, y_census, test_size=0.15, random_state=0)
 
-random_forest_census = RandomForestClassifier(n_estimators=100, criterion="entropy", random_state=0)
-random_forest_census.fit(x_census_training, y_census_training)
-predictions = random_forest_census.predict(x_census_test)
+results = []
+for number_of_trees in range(int(input('Number of trees: '))):
+    random_forest_census = RandomForestClassifier(n_estimators=number_of_trees+1, criterion="entropy", random_state=0)
+    random_forest_census.fit(x_census_training, y_census_training)
+    predictions = random_forest_census.predict(x_census_test)
+    results.append(accuracy_score(y_census_test, predictions)*100)
 
-print(accuracy_score(y_census_test, predictions))
+plt.plot(list(range(1, len(results)+1, 1)), results)
+plt.xticks(range(1, len(results)+1))
+plt.title('Accuracy of Random Forest')
+plt.xlabel('Number of trees')
+plt.ylabel('Accuracy(%)')
+plt.show()
