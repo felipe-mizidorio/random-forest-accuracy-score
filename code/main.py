@@ -2,6 +2,8 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 
 with open('data/census.csv', 'rb') as file:
     data_base = pd.read_csv(file)
@@ -34,3 +36,9 @@ scaler_census = StandardScaler()
 x_census = scaler_census.fit_transform(x_census)
 
 x_census_training, x_census_test, y_census_training, y_census_test = train_test_split(x_census, y_census, test_size=0.15, random_state=0)
+
+random_forest_census = RandomForestClassifier(n_estimators=100, criterion="entropy", random_state=0)
+random_forest_census.fit(x_census_training, y_census_training)
+predictions = random_forest_census.predict(x_census_test)
+
+print(accuracy_score(y_census_test, predictions))
